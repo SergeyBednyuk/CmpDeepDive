@@ -5,8 +5,8 @@ import {
     Component,
     ContentChild,
     contentChild,
-    ElementRef,
-    OnInit,
+    ElementRef, EventEmitter,
+    OnInit, output, Output,
     viewChild,
     ViewChild
 } from '@angular/core';
@@ -26,24 +26,24 @@ import { ControlComponent } from "../../../shared/control/control.component";
     templateUrl: './new-ticket.component.html',
     styleUrl: './new-ticket.component.css'
 })
-export class NewTicketComponent implements OnInit, AfterViewInit{
+export class NewTicketComponent implements OnInit, AfterViewInit {
     // Old way to template variable
     // @ViewChild('form') form?: ElementRef<HTMLFormElement>;
     // Angular 17.3v+
     private form = viewChild.required<ElementRef<HTMLFormElement>>('form');
+    add = output<{ title: string; text: string }>();
 
     constructor() {
         afterRender(() => {
             console.log('AFTER RENDER');
         });
-        afterNextRender(()=>{
+        afterNextRender(() => {
             console.log('AFTER NEXT RENDER');
         });
     }
 
     onSubmit(title: string, ticketText: string) {
-        console.log('TITLE TEXT: ' + title);
-        console.log('TICKET TEXT: ' + ticketText);
+        this.add.emit({ title: title, text: ticketText });
         this.form().nativeElement.reset();
     }
 
